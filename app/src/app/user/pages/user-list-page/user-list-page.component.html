@@ -1,0 +1,65 @@
+<div class="container">
+
+    <mat-card>
+        <mat-card-header>
+            <div class="header-container">
+                <mat-form-field class="filter">
+                    <mat-label>Filter</mat-label>
+                    <input #filterInput matInput placeholder="Type name, phone no or email" [(ngModel)]="filterValue">
+                    <mat-icon matSuffix *ngIf="!filterValue">search</mat-icon>
+                    <button mat-button *ngIf="filterValue" matSuffix mat-icon-button aria-label="Clear" (click)="clearFilter()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <button mat-raised-button *ngIf="canCreate" (click)="addOrEditDialog()" color="primary" style="height: 40px;" aria-label="Add User">
+                    <mat-icon>add</mat-icon> Add User
+                </button>
+            </div>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="table-container">
+                <table mat-table matSort [dataSource]="dataSource">
+
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
+                        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell mat-sort-header *matHeaderCellDef> Name </th>
+                        <td mat-cell *matCellDef="let element"> {{element.displayName}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="email">
+                        <th mat-header-cell mat-sort-header *matHeaderCellDef> Email </th>
+                        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="phone1">
+                        <th mat-header-cell mat-sort-header *matHeaderCellDef> Phone </th>
+                        <td mat-cell *matCellDef="let element"> {{element.phone}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell mat-sort-header *matHeaderCellDef> Actions </th>
+                        <td mat-cell *matCellDef="let row">
+                            <button mat-icon-button aria-label="Edit customer record" (click)="addOrEditDialog(row)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button *ngIf="canDelete" mat-icon-button aria-label="Delete user record"
+                            [swal]="{ title: 'Do you want to delete, ' + row.displayName + ' ?', showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No' }"
+                            (confirm)="delete(row)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+
+            <mat-paginator [length]="dataSource.totalUsers" [pageSize]="PER_PAGE"></mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>

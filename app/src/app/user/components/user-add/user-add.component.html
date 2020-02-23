@@ -1,0 +1,77 @@
+<div class="header">
+    <h3 *ngIf="!user">Add New User</h3>
+    <h3 *ngIf="user">Update User ({{user.displayName}})</h3>
+</div>
+<form class="form" [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate>
+    <table class="full-width" cellspacing="0" style="margin-bottom: 15px;">
+        <tr>
+            <td><mat-form-field class="full-width">
+                <mat-label>Display Name*</mat-label>
+                <input matInput formControlName="displayName" >
+            </mat-form-field></td>
+            <td style="padding-left: 15px;">
+                <mat-form-field class="full-width">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="role" [value]="user? user.role : ''">
+                      <mat-option *ngFor="let role of roles | async" [value]="role.name">
+                        {{role.name}}
+                      </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </td>
+        </tr>
+        <tr>
+            <td><mat-form-field class="full-width">
+                <mat-label>Phone*</mat-label>
+                <input matInput type="phone" formControlName="phone" >
+            </mat-form-field></td>
+            <td style="padding-left: 15px;"><mat-form-field class="full-width">
+                <mat-label>Email*</mat-label>
+                <input matInput type="email" formControlName="email" >
+            </mat-form-field></td>
+        </tr>
+        <tr>
+            <td>
+                <mat-form-field class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input matInput #passwordWithValidation
+                            type="text"
+                            formControlName="password" 
+                            placeholder="Password">
+                </mat-form-field>
+            </td>
+            <td style="padding-left: 15px;">
+                    <mat-checkbox formControlName="sendPassword">Send password via email</mat-checkbox>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <mat-password-strength #passwordComponentWithValidation
+                                                    (onStrengthChanged)="onStrengthChanged($event)"
+                                                    [enableLengthRule]="true"
+                                                    [enableLowerCaseLetterRule]="true"
+                                                    [enableUpperCaseLetterRule]="true"
+                                                    [enableDigitRule]="true"
+                                                    [enableSpecialCharRule]="false"
+                                                    [min]="6"
+                                                    [password]="passwordWithValidation.value">
+                </mat-password-strength>
+                <!--Password's strength info-->
+                <mat-password-strength-info *ngIf="!!passwordWithValidation.value"
+                    [passwordComponent]="passwordComponentWithValidation">
+                </mat-password-strength-info>
+            </td>
+        </tr>
+    </table>
+    <button mat-raised-button  color="primary" style="height: 40px;" aria-label="Save" [disabled]="!this.userForm.valid">
+        <mat-icon>save</mat-icon> Save
+    </button>
+
+    <button type="button" mat-stroked-button style="height: 40px; margin-left: 15px;" aria-label="Reset" (click)="reset()">
+        Reset
+    </button>
+
+    <button type="button" mat-raised-button style="float: right;" color="warn" aria-label="Close" matDialogClose>
+        <mat-icon>close</mat-icon> Close
+    </button>
+</form>

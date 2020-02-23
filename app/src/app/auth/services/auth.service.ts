@@ -4,6 +4,7 @@ import { User } from 'src/app/shared/models/user.model';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { isArray } from 'util';
 
 
 @Injectable({
@@ -56,7 +57,7 @@ export class AuthService {
   }
 
   can(permission){
-    const can = (this.currentUserValue.permissions.includes(permission));
+    const can = isArray(this.currentUserValue.permissions) && (this.currentUserValue.permissions.includes(permission));
     console.log(`Can user, ${permission} => ${can}`);
     return can;
   }

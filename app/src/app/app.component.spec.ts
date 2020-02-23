@@ -15,7 +15,8 @@ describe('AppComponent', () => {
         MaterialModule,SweetAlert2Module.forChild(),
         HttpClientModule,
         BrowserAnimationsModule,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        SweetAlert2Module.forRoot()
       ],
       declarations: [
         AppComponent

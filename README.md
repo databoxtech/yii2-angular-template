@@ -6,6 +6,9 @@
     <br>
 </p>
 
+[![Build Status](https://travis-ci.org/databoxtech/yii2-angular-template.svg?branch=master)](https://travis-ci.org/databoxtech/yii2-angular-template)
+
+
 Yii2 Angular Template is a skelaton project with a Yii2 Rest API and a Angular (v9) client.
 The template contains the basic features including,
 ------------------------------

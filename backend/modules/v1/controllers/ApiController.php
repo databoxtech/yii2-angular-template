@@ -5,6 +5,7 @@ namespace app\modules\v1\controllers;
 use Yii;
 // use yii\filters\auth\HttpBearerAuth;
 use sizeg\jwt\JwtHttpBearerAuth;
+use yii\filters\AccessControl;
 use yii\filters\Cors;
 use yii\rest\Controller;
 
@@ -47,24 +48,23 @@ class ApiController extends Controller
 
         ];
 
-//        $behaviors['corsFilter'] = [
-//            'class' => CorsCustom::className(),
-//        ];
-
+        $behaviors['access'] = [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['@'],
+                    'matchCallback' => function ($rule, $action) {
+                        return Yii::$app->user->can(Yii::$app->controller->id.':'.$action->id);
+                    },
+                ],
+            ],
+            'denyCallback' => function ($rule, $action) {
+                throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page: '. json_encode($action));
+            }
+        ];
 
         return $behaviors;
-    }
-
-    public function actionOptions(){
-        return '';
-    }
-
-    public function  createResponse($code, $data = []){
-
-        return [
-            'status' => $code,
-            'data'   => $data,
-        ];
     }
 
     public function getParam($name){
@@ -77,20 +77,12 @@ class ApiController extends Controller
         $params = Yii::$app->request->bodyParams;
 
         $this->params = array_merge($this->request ? $this->request : [], $params);
-//        if($this->request && !is_array($this->request)){
-//            Yii::$app->api->sendFailedResponse(['Invalid Json']);
-//        }
+
     }
 
-    public function permission_required($permission){
-        if(!Yii::$app->user->can($permission)){
-            throw new \Exception('Access Denied');
-        }
-    }
 
     public function beforeAction($action)
     {
-        //your code
         Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', '*');
 
         if (Yii::$app->getRequest()->getMethod() === 'OPTIONS') {

@@ -67,27 +67,6 @@ class RestController extends ActiveController
         return $behaviors;
     }
 
-    public function actionOptions(){
-        return '';
-    }
-
-    public function init()
-    {
-//        $this->request = json_decode(file_get_contents('php://input'), true);
-//        $params = Yii::$app->request->bodyParams;
-//
-//        $this->params = array_merge($this->request ? $this->request : [], $params);
-////        if($this->request && !is_array($this->request)){
-////            Yii::$app->api->sendFailedResponse(['Invalid Json']);
-////        }
-    }
-
-    public function permission_required($permission){
-        if(!Yii::$app->user->can($permission)){
-            throw new \Exception('Access Denied');
-        }
-    }
-
     public function beforeAction($action)
     {
         //your code

@@ -1,38 +1,76 @@
-<p align="center">
-    <a href="http://databoxtech.com" target="_blank">
-        <img src="https://avatars2.githubusercontent.com/u/60692131?s=200&v=4" height="100px" />
-    </a>
-    <h1 align="center">Yii2 Angular Template</h1>
-    <br>
-</p>
-
-Yii2 Angular Template is a skelaton project with a Yii2 Rest API and a Angular (v9) client.
-The template contains the basic features including,
-------------------------------
-    JWT authentication
-    User Management (via angular app)
-    Role based access control (Yii2 RBAC)
-
-You can keep adding more functionality to following same pattern. Refer documentations to find out more.
-
-DIRECTORY STRUCTURE
+Directory Structure
 -------------------
+      commands/                 Console commands for permission generation and user creation
+      migrations/               Database migrations
+      models/                   Shared model classes
+      modules/v1/               API version 1 module
+      modules/v1/controllers/   Controllers for api v1
+      
+Special Classes
+---------------
+Below classes are base classes for certain classes,
 
-      app/               Angular v9 frontend application
-      backend/           Yii2 backend application
+    app\modules\v1\controllers\ApiController    Used as base class for non ActiveControllers. Extending from this will automatically configure authentication & authorization, CORS and optionally rate limiting
+    app\modules\v1\controllers\RestController   Used as ActiveController base class. Extending from this will automatically configure authentication & authorization, CORS and optionally rate limiting
 
-SETUP INSTRUCTIONS
-------------------
-    1. Clone the repo (git clone https://github.com/databoxtech/yii2-angular-template)
-    2. Install yii2 dependecies using composer (cd backend && composer install)
-    3. Configure database by editing config/db.php
-    4. Initialize database (./yii migrate)
-    5. Initialize yii2 rbac by running `./yii migrate --migrationPath=@yii/rbac/migrations`
-    6. Initialize basic permissions/role and admin account by running `./yi user/permissions`
-    7. Run backend api by running `./yii serve`
-    8. Install angular dependencies using npm (cd app && npm install)
-    9. Run frontend application by running `ng serve`
-    10. Open http://localhost:4200 and login using below credentials,
-        Username (email): admin@template.com
-        Passowrd: test@123
+API Endpoints
+------------    
+   * POST auth/login             
+   Login by providing username & password. On success JWT token will be issued
+   * GET users?search={query}&per-page=10&page=2&sort=-id    
+   Get list of users. search,per-page,page,sort params are optional. If search param is provided will search against displayName, email & phone attributes. Result can be paged by providing `per-page` and `page` attributes. Paging information will be available in the response header. Sort param will sort the result per specified attribute (ASC id => id, DESC id => -id)
+   * GET users/{id}
+   Get user specified by id
+   * POST users
+   Create new user based on the provided attributes
+   * PUT users/{id}
+   Update user
+   * DELETE users/{id}
+   Delete specified user
     
+Authentications
+--------------
+Authentication handled via JWT tokens. JWT generation code can be found in models/User
+    
+    $token = $jwt->getBuilder()
+        ->setIssuer('https://github.com/databoxtech/yii2-angular-template')// Configures the issuer (iss claim)
+        ->setAudience('yii2-angular-template')// Configures the audience (aud claim)
+        ->setId('6O5457V2RW', true)// Configures the id (jti claim), replicating as a header item
+        ->setIssuedAt(time())// Configures the time that the token was issue (iat claim)
+        ->setExpiration(time() + 5184000)// Configures the expiration time (60 days) of the token (exp claim)
+        ->set('uid',  $user->id)// Configures a new claim, called "id"
+        ->set('displayName',  $user->displayName)
+        ->set('permission',  $permissions)
+        ->sign($signer, $jwt->key)// creates a signature using [[Jwt::$key]]
+        ->getToken();
+        
+Authorizations
+--------------
+Yii2 Database RBAC is used. However in controllers instead of restricting access based on roles, permissions are used to manage access. Permissions has a special format,
+    
+    controller:action
+        Ex: user:create, user:view
+Base class rest controller is configured to check access based on this permission definition format,
+
+        $behaviors['access'] = [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['@'],
+                    'matchCallback' => function ($rule, $action) {
+                        return Yii::$app->user->can(Yii::$app->controller->id.':'.$action->id);
+                    },
+                ],
+            ],
+            'denyCallback' => function ($rule, $action) {
+                throw new \yii\web\ForbiddenHttpException('You are not allowed to access this page: '. json_encode($action));
+            }
+        ];
+        
+        
+Available Console Commands
+--------------------------
+Apart from basic yii console commands, below two commands are available
+* user/create {email} {password} : create new user account by providing email/ password
+* user/permissions  : Generate permissions and roles. Modify this command to include required permissions. 

@@ -57,7 +57,7 @@ export class AuthService {
   }
 
   can(permission){
-    const can = isArray(this.currentUserValue.permissions) && (this.currentUserValue.permissions.includes(permission));
+    const can = this.currentUserValue && isArray(this.currentUserValue.permissions) && (this.currentUserValue.permissions.includes(permission));
     console.log(`Can user, ${permission} => ${can}`);
     return can;
   }

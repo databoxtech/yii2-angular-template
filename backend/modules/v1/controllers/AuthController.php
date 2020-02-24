@@ -14,18 +14,14 @@ class AuthController extends ApiController
     {
 
         $behaviors = parent::behaviors();
-        $behaviors['authenticator']['optional'] = ['login', 'index'];
+        $behaviors['authenticator']['optional'] = ['login'];
+        unset($behaviors['access']);
 
         return $behaviors + [
                'access' => [
                    'class' => AccessControl::className(),
-                   'only' => ['logout', 'me'],
+                   'only' => ['logout'],
                    'rules' => [
-                       [
-                           'actions' => ['logout'],
-                           'allow' => true,
-                           'roles' => ['@'],
-                       ],
                        [
                            'actions' => ['login'],
                            'allow' => true,
@@ -64,26 +60,6 @@ class AuthController extends ApiController
         } else {
             throw new HttpException(403, "Invalid Credentials {$username} {$password}");
         }
-    }
-
-    public function actionLogout()
-    {
-//        $headers = Yii::$app->getRequest()->getHeaders();
-//        $access_token = $headers->get('x-access-token');
-//
-//        if(!$access_token){
-//            $access_token = Yii::$app->getRequest()->getQueryParam('access-token');
-//        }
-//
-//        $model = AccessToken::findOne(['token' => $access_token]);
-//
-//        if ($model->delete()) {
-//            Yii::$app->api->sendSuccessResponse(["Logged Out Successfully"]);
-//        } else {
-//            Yii::$app->api->sendFailedResponse("Invalid Request");
-//        }
-
-
     }
 
 }

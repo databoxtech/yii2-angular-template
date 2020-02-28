@@ -39,3 +39,15 @@ SETUP INSTRUCTIONS
         Username (email): admin@template.com
         Passowrd: test@123
     
+
+
+SCREENSHOTS
+-----------
+
+![Login](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/Login.png)
+
+![Dashboard](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/Dashboard.png)
+
+![Users](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/View%20Users.png)
+
+![Create User](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/Create%20User.png)

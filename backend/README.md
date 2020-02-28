@@ -74,3 +74,16 @@ Available Console Commands
 Apart from basic yii console commands, below two commands are available
 * user/create {email} {password} : create new user account by providing email/ password
 * user/permissions  : Generate permissions and roles. Modify this command to include required permissions. 
+
+
+
+SCREENSHOTS
+-----------
+
+![Login](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/Login.png)
+
+![Dashboard](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/Dashboard.png)
+
+![Users](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/View%20Users.png)
+
+![Create User](https://raw.githubusercontent.com/databoxtech/yii2-angular-template/master/screenshots/Create%20User.png)

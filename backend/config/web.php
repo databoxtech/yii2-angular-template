@@ -64,7 +64,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'OPTIONS /v1/<url:[a-zA-Z0-9-/]+>' => '/v1/rest/options',
+                'OPTIONS /v1/<url:[a-zA-Z0-9-/]+>' => '/v1/api/options',
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => ['v1/user'],

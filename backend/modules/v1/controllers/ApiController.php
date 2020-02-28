@@ -7,7 +7,7 @@ use Yii;
 use sizeg\jwt\JwtHttpBearerAuth;
 use yii\filters\AccessControl;
 use yii\filters\Cors;
-use yii\rest\Controller;
+use yii\web\Controller;
 
 class ApiController extends Controller
 {
@@ -24,7 +24,7 @@ class ApiController extends Controller
     {
         $behaviors = parent::behaviors();
 
-        $behaviors['rateLimiter']['enableRateLimitHeaders'] = true;
+//        $behaviors['rateLimiter']['enableRateLimitHeaders'] = true;
 
         $behaviors['authenticator'] = [
             'class' => JwtHttpBearerAuth::class,
@@ -40,8 +40,8 @@ class ApiController extends Controller
                 'Origin' => ['*'],
                 'Access-Control-Allow-Origin' => ['*'],
                 'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
-                'Access-Control-Request-Headers' => ['*'],
-                'Access-Control-Allow-Credentials' => null,
+                'Access-Control-Allow-Headers' => ['Content-Type', 'Authorization'],
+                'Access-Control-Allow-Credentials' => true,
                 'Access-Control-Max-Age' => 86400,
                 'Access-Control-Expose-Headers' => []
             ]
@@ -71,22 +71,25 @@ class ApiController extends Controller
         return isset($this->params[$name]) ? $this->params[$name] : false;
     }
 
+    public function actionOptions(){
+        return '';
+    }
+
     public function init()
     {
         $this->request = json_decode(file_get_contents('php://input'), true);
         $params = Yii::$app->request->bodyParams;
 
         $this->params = array_merge($this->request ? $this->request : [], $params);
-
     }
 
 
     public function beforeAction($action)
     {
         Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', '*');
+        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
         if (Yii::$app->getRequest()->getMethod() === 'OPTIONS') {
-            parent::beforeAction($action);
             Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Credentials', 'true');
             Yii::$app->end();
         }

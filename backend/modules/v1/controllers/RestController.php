@@ -16,7 +16,7 @@ class RestController extends ActiveController
     {
         $behaviors = parent::behaviors();
 
-        $behaviors['rateLimiter']['enableRateLimitHeaders'] = true;
+//        $behaviors['rateLimiter']['enableRateLimitHeaders'] = true;
 
         $behaviors['authenticator'] = [
             'class' => JwtHttpBearerAuth::class,

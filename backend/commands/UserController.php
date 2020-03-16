@@ -44,6 +44,7 @@ class UserController extends Controller
         $auth->removeAll();
 
         $permissionsArray = [
+            'user:me' => 'Get my profile',
             'user:index' => 'View users',
             'user:view' => 'View user',
             'user:create' => 'Add users',
@@ -69,6 +70,7 @@ class UserController extends Controller
         $auth->addChild($user, $permissions['user:index']);
         $auth->addChild($user, $permissions['user:view']);
 
+        User::deleteAll([]);
 
         $user = new User();
         $user->displayName = 'Test Admin';

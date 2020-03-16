@@ -18,7 +18,7 @@ export class AuthService {
 
   private permissions;
 
-  public authUrl = `${environment.apiBaseUrl}auth/login`;
+  public authUrl = `${environment.apiBaseUrl}auth/token`;
 
   constructor(private http: HttpClient) {
       this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('__yat-user')));
@@ -36,19 +36,42 @@ export class AuthService {
       return this.currentUserSubject.value;
   }
 
+  public getJwtToken(): string{
+    return this.currentUserValue ? this.currentUserValue.jwt : null;
+  }
+
   login(email, password) {
-    console.log(`Login Request ${email} => ${password}`);
-    return this.http.post<any>(this.authUrl, { email, password })
-        .pipe(map(resp => {
-          if(resp && resp.jwt){
-            localStorage.setItem('__yat-user', JSON.stringify(resp));
-            this.currentUserSubject.next(resp);
-            this.permissions = resp.permissions;
-            console.log(this.permissions);
-            return resp;
-          }
-          return null;
-        }));
+    return this.http.post<any>(this.authUrl, {
+      "email": email,
+      "password" : password,
+      "grant_type": "password"
+    }).pipe(map(resp => {
+      return this.processAuthResponse(resp);
+    }));
+  }
+
+  refreshJwt(){
+    return this.http.post<any>(this.authUrl, {
+      "grant_type": "refresh_token",
+      "refresh_token": this.currentUserValue.refresh_token
+    }).pipe(map(resp => {
+      return this.processAuthResponse(resp);
+    }));
+  }
+
+  private processAuthResponse(response){
+    if(response && response.jwt){
+      const user = (new User()).deserialize(response.user);
+      user.jwt = response.jwt;
+      user.refresh_token = response.refresh_token;
+      user.permissions = response.permissions;
+      localStorage.setItem('__yat-user', JSON.stringify(user));
+
+      this.permissions = user.permissions;
+      this.currentUserSubject.next(user);
+      return user;
+    }
+    return null;
   }
 
   logout() {

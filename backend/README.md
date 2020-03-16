@@ -15,8 +15,8 @@ Below classes are base classes for certain classes,
 
 API Endpoints
 ------------    
-   * POST auth/login             
-   Login by providing username & password. On success JWT token will be issued
+   * POST auth/token             
+   Retrieve JWT token & Refresh token by either providing username & password or refresh token. For email/password set grant_type=password, for resfresh token set grant_type=refresh_token
    * GET users?search={query}&per-page=10&page=2&sort=-id    
    Get list of users. search,per-page,page,sort params are optional. If search param is provided will search against displayName, email & phone attributes. Result can be paged by providing `per-page` and `page` attributes. Paging information will be available in the response header. Sort param will sort the result per specified attribute (ASC id => id, DESC id => -id)
    * GET users/{id}

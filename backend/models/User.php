@@ -122,8 +122,9 @@ class User extends \yii\db\ActiveRecord implements  IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        $id = $token->getClaim('uid');
-        return User::findOne(['id' => $id]);
+        $u = new User();
+        $u->id = $token->getClaim('uid');
+        return $u;
     }
 
     /**
@@ -168,37 +169,6 @@ class User extends \yii\db\ActiveRecord implements  IdentityInterface
     public function validateAuthKey($authKey)
     {
         // TODO: Implement validateAuthKey() method.
-    }
-
-
-    public function createJwt($user)
-    {
-
-        $signer = new \Lcobucci\JWT\Signer\Hmac\Sha256();
-        /** @var Jwt $jwt */
-        $jwt = Yii::$app->jwt;
-
-
-        $user_permissions = Yii::$app->authManager->getPermissionsByUser($user->id);
-        $permissions = [];
-        foreach ($user_permissions as $key => $user_permission) {
-            array_push($permissions, $key);
-        }
-
-
-        $token = $jwt->getBuilder()
-            ->setIssuer('https://github.com/databoxtech/yii2-angular-template')// Configures the issuer (iss claim)
-            ->setAudience('yii2-angular-template')// Configures the audience (aud claim)
-            ->setId('6O5457V2RW', true)// Configures the id (jti claim), replicating as a header item
-            ->setIssuedAt(time())// Configures the time that the token was issue (iat claim)
-            ->setExpiration(time() + 5184000)// Configures the expiration time (60 days) of the token (exp claim)
-            ->set('uid',  $user->id)// Configures a new claim, called "id"
-            ->set('displayName',  $user->displayName)
-            ->set('permission',  $permissions)
-            ->sign($signer, $jwt->key)// creates a signature using [[Jwt::$key]]
-            ->getToken();
-
-        return (string)$token;
     }
 
     /**

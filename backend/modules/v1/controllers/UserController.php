@@ -108,4 +108,8 @@ class UserController extends RestController
         return $model;
     }
 
+    public function actionMe(){
+        return  User::findOne(['id' => Yii::$app->user->id]);
+    }
+
 }
